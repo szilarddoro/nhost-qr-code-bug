@@ -27,13 +27,6 @@ export default async (req: Request, res: Response) => {
       description,
     });
 
-    // const qrStream = new PassThrough();
-    // await QRCode.toFileStream(qrStream, content, {
-    //   type: "png",
-    //   width: typeof width === "string" ? parseInt(width, 2) || 400 : 400,
-    //   errorCorrectionLevel: "H",
-    // });
-
     QRCode.toDataURL(content, (error, url) => {
       if (error) {
         console.error("Failed to return content", error);
@@ -45,8 +38,6 @@ export default async (req: Request, res: Response) => {
         `<!DOCTYPE html><html><body><img src="${url}" width="${width}" /></body></html>`
       );
     });
-
-    // return qrStream.pipe(res);
   } catch (err) {
     console.error("Failed to return content", err);
   }
