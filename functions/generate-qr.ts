@@ -15,7 +15,6 @@ import QRCode from "qrcode";
  */
 export default async (req: Request, res: Response) => {
   try {
-    res.setHeader("Content-Type", "image/png");
     const locationId = req.query.locationId;
     const address = req.query.address;
     const description = req.query.description;
