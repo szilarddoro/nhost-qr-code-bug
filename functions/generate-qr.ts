@@ -33,26 +33,30 @@ export default async (req: Request, res: Response) => {
     //   errorCorrectionLevel: "H",
     // });
 
-    const buffer = await QRCode.toBuffer(content, {
-      type: "png",
+    // const buffer = await QRCode.toBuffer(content, {
+    //   type: "png",
+    //   width: typeof width === "string" ? parseInt(width, 2) || 400 : 400,
+    //   errorCorrectionLevel: "H",
+    // });
+    const dataUrl = await QRCode.toDataURL(content, {
+      type: "image/png",
       width: typeof width === "string" ? parseInt(width, 2) || 400 : 400,
       errorCorrectionLevel: "H",
     });
 
-    console.log(buffer.length);
+    console.log(dataUrl);
+
+    const dataUrlBuffer = Buffer.from(dataUrl.split(",")[1], "base64");
+
+    console.log(dataUrlBuffer);
 
     const finalResponse = res.writeHead(200, {
       "Content-Type": "image/png",
-      "Content-Length": buffer.length,
+      "Content-Length": dataUrlBuffer.length,
       "Content-Disposition": "attachment;filename=qr.png",
     });
-    // const dataUrl = await QRCode.toDataURL(content, {
-    //   type: "image/png",
-    //   width: typeof width === "string" ? parseInt(width, 2) || 400 : 400,
-    //   errorCorrectionLevel: "H",
-    // });
 
-    finalResponse.end(buffer);
+    finalResponse.end(dataUrlBuffer);
 
     // res.send(dataUrl);
   } catch (err) {
