@@ -1,8 +1,6 @@
-import {Request, Response} from 'express';
-import {PassThrough} from 'stream';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const QRCode = require("qrcode")
+import { Request, Response } from "express";
+import QRCode from "qrcode";
+import { PassThrough } from "stream";
 
 /**
  * Generates QR code to be put in a Location.
@@ -17,7 +15,8 @@ const QRCode = require("qrcode")
  * @param res
  */
 export default async (req: Request, res: Response) => {
-  try{
+  try {
+    res.setHeader("Content-Type", "image/png");
     const locationId = req.query.locationId;
     const address = req.query.address;
     const description = req.query.description;
@@ -26,21 +25,18 @@ export default async (req: Request, res: Response) => {
     const content = JSON.stringify({
       locationId,
       address,
-      description
-    })
+      description,
+    });
 
     const qrStream = new PassThrough();
-    await QRCode.toFileStream(qrStream, content,
-      {
-        type: 'png',
-        width: width,
-        errorCorrectionLevel: 'H'
-      }
-    );
+    await QRCode.toFileStream(qrStream, content, {
+      type: "png",
+      width: typeof width === "string" ? parseInt(width, 2) || 400 : 400,
+      errorCorrectionLevel: "H",
+    });
 
-    qrStream.pipe(res);
-  } catch(err){
-    console.error('Failed to return content', err);
+    return qrStream.pipe(res);
+  } catch (err) {
+    console.error("Failed to return content", err);
   }
-}
-
+};
