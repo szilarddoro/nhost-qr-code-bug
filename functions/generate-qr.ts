@@ -38,13 +38,19 @@ export default async (req: Request, res: Response) => {
       width: typeof width === "string" ? parseInt(width, 2) || 400 : 400,
       errorCorrectionLevel: "H",
     });
+
+    const finalResponse = res.writeHead(200, {
+      "Content-Type": "image/png",
+      "Content-Length": buffer.length,
+      "Content-Disposition": "attachment;filename=qr.png",
+    });
     // const dataUrl = await QRCode.toDataURL(content, {
     //   type: "image/png",
     //   width: typeof width === "string" ? parseInt(width, 2) || 400 : 400,
     //   errorCorrectionLevel: "H",
     // });
 
-    res.send(buffer);
+    finalResponse.end(buffer);
 
     // res.send(dataUrl);
   } catch (err) {
