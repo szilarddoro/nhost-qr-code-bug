@@ -39,6 +39,8 @@ export default async (req: Request, res: Response) => {
       errorCorrectionLevel: "H",
     });
 
+    console.log(buffer.length);
+
     const finalResponse = res.writeHead(200, {
       "Content-Type": "image/png",
       "Content-Length": buffer.length,
