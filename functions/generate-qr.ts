@@ -27,24 +27,26 @@ export default async (req: Request, res: Response) => {
       description,
     });
 
-    QRCode.toFileStream(
-      res,
-      content,
-      {
-        type: "png",
-        width: typeof width === "string" ? parseInt(width, 2) || 400 : 400,
-        errorCorrectionLevel: "H",
-      },
-      (error) => {
-        if (error) {
-          console.error("Failed to return content", error);
+    // await QRCode.toFileStream(res, content, {
+    //   type: "png",
+    //   width: typeof width === "string" ? parseInt(width, 2) || 400 : 400,
+    //   errorCorrectionLevel: "H",
+    // });
 
-          res.send(error);
-        }
+    const buffer = await QRCode.toBuffer(content, {
+      type: "png",
+      width: typeof width === "string" ? parseInt(width, 2) || 400 : 400,
+      errorCorrectionLevel: "H",
+    });
+    // const dataUrl = await QRCode.toDataURL(content, {
+    //   type: "image/png",
+    //   width: typeof width === "string" ? parseInt(width, 2) || 400 : 400,
+    //   errorCorrectionLevel: "H",
+    // });
 
-        res.end();
-      }
-    );
+    res.send(buffer);
+
+    // res.send(dataUrl);
   } catch (err) {
     console.error("Failed to return content", err);
   }
