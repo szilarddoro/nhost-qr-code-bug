@@ -15,7 +15,7 @@ import QRCode from "qrcode";
  */
 export default async (req: Request, res: Response) => {
   try {
-    res.setHeader("Content-Type", "text/html");
+    res.setHeader("Content-Type", "image/png");
     const locationId = req.query.locationId;
     const address = req.query.address;
     const description = req.query.description;
@@ -27,17 +27,24 @@ export default async (req: Request, res: Response) => {
       description,
     });
 
-    QRCode.toDataURL(content, (error, url) => {
-      if (error) {
-        console.error("Failed to return content", error);
+    QRCode.toFileStream(
+      res,
+      content,
+      {
+        type: "png",
+        width: typeof width === "string" ? parseInt(width, 2) || 400 : 400,
+        errorCorrectionLevel: "H",
+      },
+      (error) => {
+        if (error) {
+          console.error("Failed to return content", error);
 
-        res.send(error);
+          res.send(error);
+        }
+
+        res.end();
       }
-
-      res.end(
-        `<!DOCTYPE html><html><body><img src="${url}" width="${width}" /></body></html>`
-      );
-    });
+    );
   } catch (err) {
     console.error("Failed to return content", err);
   }
